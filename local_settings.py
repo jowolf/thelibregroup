@@ -1,0 +1,1 @@
+/home/joe/cartridge_test/conf/local_settings.py
