@@ -1,0 +1,80 @@
+#NameVirtualHost *:80
+<VirtualHost *:80>
+    ServerAdmin joe@thelibregroup.com
+    ServerName thelibregroup.com
+    ServerAlias www.thelibregroup.com
+
+    <Location />
+        Order Deny,Allow
+        Allow from all
+    </Location>
+
+    Alias /static   /home/joe/thelibregroup/static
+    Alias /img      /home/joe/thelibregroup/static/img
+    Alias /css      /home/joe/thelibregroup/static/css
+    Alias /js       /home/joe/thelibregroup/static/js
+    Alias /favicon.ico  /home/joe/thelibregroup/static/img/favicon.ico
+    Alias /robots.txt   /home/joe/thelibregroup/static/robots.txt
+    Alias /humans.txt   /home/joe/thelibregroup/static/humans.txt
+
+
+    <Directory /home/joe/thelibregroup/static>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride None
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    #Alias /media /home/joe/thelibregroup/media
+    #<Directory /home/joe/thelibregroup/media>
+    #    Order allow,deny
+    #    Allow from all
+    #</Directory>
+
+    #ErrorLog /var/log/apache2/error-thelibregroup.log
+    #LogLevel warn
+    #    # comment out BOTH of these when implementing logdb2 - the only reason the 2nd is needed is because of the 1st
+    #    CustomLog /var/log/apache2/access-thelibregroup.log vhost_combined
+    #    #CustomLog /var/log/apache2/access.logdb logdb
+
+    ServerSignature Off
+
+    WSGIScriptAlias / /home/joe/thelibregroup/wsgi.py
+</VirtualHost>
+
+
+<IfModule mod_ssl.c>
+    #NameVirtualHost *:443
+    <VirtualHost *:443>
+
+        <Location />
+        Order Deny,Allow
+        Allow from All
+        </Location>
+
+        SSLEngine on
+        SSLCertificateFile    /etc/apache2/ssl/thelibregroup/thelibregroup.crt
+        SSLCertificateKeyFile /etc/apache2/ssl/thelibregroup/thelibregroup.key
+        BrowserMatch "MSIE [1-4]" nokeepalive ssl-unclean-shutdown \
+                                  downgrade-1.0 force-response-1.0
+        BrowserMatch "MSIE [5-9]" ssl-unclean-shutdown
+        SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP
+
+        ServerAdmin joe@thelibregroup.com
+            ServerName thelibregroup.com
+            ServerAlias www.thelibregroup.com
+            #redirect? thelibregroup.org, .net
+
+        #SSLProxyEngine on
+        #SSLProxyVerify optional_no_ca
+
+        ProxyPass / http://127.0.0.1:7080/VirtualHostBase/http/thelibregroup.com:80/eRacks/VirtualHostRoot/
+        ProxyPassReverse / http://127.0.0.1:7080/VirtualHostBase/http/thelibregroup.com:80/eRacks/VirtualHostRoot/
+
+        ErrorLog /var/log/apache2/ssl-error-thelibregroup.log
+            LogLevel warn
+        CustomLog /var/log/apache2/ssl-access-thelibregroup.log combined
+        ServerSignature On
+    </VirtualHost>
+</IfModule>
+
