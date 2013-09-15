@@ -237,6 +237,13 @@ def upload_template_and_reload(name):
     if reload_command:
         sudo(reload_command)
 
+@task
+def nginx_config():
+    """
+    Installs nginx config from template
+    """
+    return upload_template_and_reload ('nginx')
+
 
 def db_pass():
     """
