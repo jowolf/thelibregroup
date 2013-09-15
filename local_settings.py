@@ -1,1 +1,1 @@
-/home/joe/cartridge_test/conf/local_settings.py
+/home/joe/thelibregroup/conf/local_settings.py
