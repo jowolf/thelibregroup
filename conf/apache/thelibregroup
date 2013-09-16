@@ -39,7 +39,7 @@
 
     ServerSignature Off
 
-    WSGIScriptAlias / /home/joe/thelibregroup/wsgi.py
+    WSGIScriptAlias / /home/joe/thelibregroup/thelibregroup/wsgi.py
 </VirtualHost>
 
 
