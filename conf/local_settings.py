@@ -27,7 +27,9 @@ ADMINS = (
 )
 MANAGERS = ADMINS
 
-ALLOWED_HOSTS = ['127.0.0.1']
+SITE_ID = 2
+
+#ALLOWED_HOSTS = ['127.0.0.1']
 
 FABRIC = {
     "HOSTS": ["thelibregroup.com"], # List of hosts to deploy to

@@ -178,7 +178,7 @@ DEBUG = False
 # Whether a user's session cookie expires when the Web browser is closed.
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-SITE_ID = 1
+#SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -282,6 +282,7 @@ TEMPLATE_DIRS = (os.path.join(PROJECT_ROOT, "templates"),)
 ################
 
 INSTALLED_APPS = (
+    # Django apps
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -290,6 +291,8 @@ INSTALLED_APPS = (
     "django.contrib.sites",
     "django.contrib.sitemaps",
     "django.contrib.staticfiles",
+
+    # Mezzanine / cartridge apps
     "cartridge.shop",
     "mezzanine.boot",
     "mezzanine.conf",
@@ -302,6 +305,9 @@ INSTALLED_APPS = (
     "mezzanine.twitter",
     "mezzanine.accounts",
     #"mezzanine.mobile",
+
+    # My apps
+    "apps.home",
 )
 
 # List of processors used by RequestContext to populate the context.
