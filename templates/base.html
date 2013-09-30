@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="{{ LANGUAGE_CODE }}"{% if LANGUAGE_BIDI %} dir="rtl"{% endif %}>
-{% load pages_tags mezzanine_tags i18n future staticfiles %}
+{% load pages_tags mezzanine_tags i18n future staticfiles accounts_tags shop_tags %}
 <head>
 
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -15,14 +15,20 @@
 <link rel="alternate" type="application/atom+xml" title="Atom" href="{% url "blog_post_feed" "atom" %}">
 {% endifinstalled %}
 
+<!-- Latest compiled and minified CSS - From netdna bootstrap CDN -->
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+{# <!-- Optional theme --> #}
+{# <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css"> #}
+
 {% nevercache %}
-<link rel="stylesheet" href="{{ STATIC_URL }}css/{{ request.COOKIES.theme|default:"bootstrap" }}.css">
+{# <link rel="stylesheet" href="{{ STATIC_URL }}css/{{ request.COOKIES.theme|default:"bootstrap" }}.css"> #}
+<link href="//netdna.bootstrapcdn.com/bootswatch/3.0.0/{{ request.COOKIES.theme|default:"bootstrap" }}/bootstrap.min.css" rel="stylesheet">
 {% endnevercache %}
 
 {% compress css %}
 <!-- link rel="stylesheet" href="{% static "css/bootstrap.css" %}" -->
 <link rel="stylesheet" href="{% static "css/mezzanine.css" %}">
-<link rel="stylesheet" href="{% static "css/bootstrap-responsive.css" %}">
+{# <link rel="stylesheet" href="{% static "css/bootstrap-responsive.css" %}"> #}
 {% if LANGUAGE_BIDI %}
 <link rel="stylesheet" href="{% static "css/rtl.css" %}">
 {% endif %}
@@ -35,6 +41,7 @@
 
 <style>
 body {padding-top:110px;}
+.navbar .navbar-above {background:white;}
 .navbar .nav {overflow:hidden; max-width:460px; max-height:40px;}
 .navbar-search * {float:none !important;}
 .themes-group {margin-top:10px;}
@@ -45,6 +52,7 @@ body {padding-top:110px;}
 .amelia .navbar .nav {max-height:50px;}
 .amelia .navbar-search .btn {padding:3px;}
 @media (max-width: 979px) {.navbar .nav {height:auto;}}
+//.icon-cart:before { content: ""; }
 </style>
 
 {% block extra_css %}{% endblock %}
@@ -52,8 +60,8 @@ body {padding-top:110px;}
 
 {% compress js %}
 <script src="{% static "mezzanine/js/"|add:settings.JQUERY_FILENAME %}"></script>
-<script src="{% static "js/bootstrap.js" %}"></script>
-<script src="{% static "js/bootstrap-extras.js" %}"></script>
+{# <script src="{% static "js/bootstrap.js" %}"></script> #}
+{# <script src="{% static "js/bootstrap-extras.js" %}"></script> #}
 <script src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
 
 <script>
@@ -70,6 +78,10 @@ $(function() {
 </script>
 {% block extra_js %}{% endblock %}
 {% endcompress %}
+
+<!-- Latest compiled and minified JavaScript - From netdna bootstrap CDN -->
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
 <!--[if lt IE 9]>
 <script src="{% static "js/html5shiv.js" %}"></script>
 <![endif]-->
@@ -87,7 +99,48 @@ $(function() {
     {% if settings.SITE_TAGLINE %}<p class="navbar-text">{{ settings.SITE_TAGLINE }}</p>{% endif %}
 
     {% nevercache %}
-    {% include "includes/user_panel.html" %}
+
+    <div style="float:right;line-height:60px">
+        <a href="{% url "shop_cart" %}"
+            title="{% blocktrans count request.cart.total_quantity as cart_quantity %}1 item{% plural %}{{ cart_quantity }} items{% endblocktrans %}
+                {% trans "in cart" %}:
+                {{ request.cart.total_price|currency }}"
+            >
+            cart
+        </a>
+        {% if request.cart.total_quantity != 0 %}
+          <a href="{% url "shop_checkout" %}"
+            title="{% if request.session.order.step %}{% trans "Return to Checkout" %}{% else %}{% trans "Go to Checkout" %}{% endif %}"
+            >
+            checkout
+          </a>
+        {% endif %}
+        {% if settings.SHOP_USE_WISHLIST %}
+          <a href="{% url "shop_wishlist" %}"
+          title="{% blocktrans count request.wishlist|length as wishlist_count %}Wishlist contains 1 item{% plural %} Wishlist contains {{ wishlist_count }} items{% endblocktrans %}"
+          >
+            wishlist
+          </a>
+        {% endif %}
+
+        {% if request.user.is_authenticated %}
+            {% trans "Logged in as: " %}
+            {% url "profile" request.user.username as profile_url %}
+            {% if profile_url %}
+                <a href="{{ profile_url }}">{{ request.user|username_or:"email" }}</a>
+                <a href="{% url "profile_update" %}">{% trans "Update profile" %}</a>
+            {% else %}
+                <a href="{% url "profile_update" %}">{{ request.user|username_or:"email" }}</a>
+            {% endif %}
+            <a href="{% url "logout" %}?next={{ request.path }}">{% trans "Log out" %}</a>
+        {% else %}
+            <a href="{% url "login" %}?next={{ request.path }}">{% trans "Log in" %}</a>
+            {% trans "or" %}
+            <a href="{% url "signup" %}?next={{ request.path }}">{% trans "Sign up" %}</a>
+        {% endif %}
+
+    </div>
+
     {% endnevercache %}
 
   </div>
